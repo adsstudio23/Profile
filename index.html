@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adrieza Rizky Samudra — Full-Stack Developer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Partikel background (ringan) -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <img id="logoDisplay" src="" alt="Logo" class="logo-placeholder">
+            <span>ADS Studio</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="nav-item">Beranda</a></li>
+            <li><a href="#about" class="nav-item">Tentang</a></li>
+            <li><a href="#projects" class="nav-item">Proyek</a></li>
+            <li><a href="#experience" class="nav-item">Pengalaman</a></li>
+            <li><a href="#why-me" class="nav-item">Why Me</a></li>
+            <li><a href="#contact" class="nav-item">Kontak</a></li>
+        </ul>
+        <div class="nav-toggle">
+            <span></span><span></span><span></span>
+        </div>
+        <button class="theme-toggle" aria-label="Ganti tema">
+            <span class="sun-icon">☀️</span>
+            <span class="moon-icon">🌙</span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-image" id="heroImage">
+                <img id="profilePhotoDisplay" src="" alt="Foto Profil" class="profile-photo">
+            </div>
+            <h1 class="hero-title" id="nameDisplay">Adrieza Rizky Samudra</h1>
+            <p class="hero-tagline" id="taglineDisplay"></p>
+            <p class="hero-description" id="descriptionDisplay">
+                Front-end designer berpengalaman 10 tahun. Menguasai JavaScript, HTML/CSS, PHP, Ruby. Membangun website dinamis maupun statis yang cepat dan interaktif.
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary ripple">Lihat Karya</a>
+                <a href="#contact" class="btn btn-outline ripple">Hubungi Saya</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about reveal">
+        <h2 class="section-title">Tentang Saya</h2>
+        <div class="about-content">
+            <div class="about-text" id="aboutText">
+                <p>Saya Adrieza, seorang full-stack developer dengan keunggulan di bidang front-end design. Saya telah mendesain dan mengembangkan website selama lebih dari satu dekade.</p>
+                <p>Saya percaya bahwa website yang baik bukan hanya soal kode, tapi juga bagaimana pengalaman pengguna terasa mulus dan menyenangkan. Dari HTML/CSS hingga React, dari PHP hingga Ruby, saya siap mewujudkan ide digital Anda.</p>
+            </div>
+            <div class="skills" id="skillsContainer"></div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <h2 class="section-title">Proyek Terbaru</h2>
+        <div class="projects-grid" id="projectsGrid"></div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience">
+        <h2 class="section-title">Pengalaman Kerja</h2>
+        <div class="timeline" id="timelineContainer"></div>
+    </section>
+
+    <!-- Why Me Section -->
+    <section id="why-me" class="why-me">
+        <h2 class="section-title">Kenapa Harus Pilih Saya?</h2>
+        <div class="why-me-grid" id="whyMeGrid">
+            <!-- Diisi dari app.js atau statis -->
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2 class="section-title">Hubungi Saya</h2>
+        <div class="contact-info">
+            <div class="contact-item">
+                <span class="contact-icon">📱</span>
+                <a id="whatsappLink" href="#" target="_blank">WhatsApp</a>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">📷</span>
+                <a id="instagramLink" href="#" target="_blank">Instagram</a>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">✉️</span>
+                <a id="emailLink" href="#">Email</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Adrieza Rizky Samudra. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

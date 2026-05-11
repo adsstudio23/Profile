@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Mode — ADS Studio</title>
+    <style>
+        :root {
+            --bg: #2c2c2c;
+            --card-bg: #3a3a3a;
+            --text: #e0e0e0;
+            --accent: #b08a8a;
+            --border: #555;
+            --font: 'Segoe UI', sans-serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container { max-width: 800px; width: 100%; }
+        h1 { color: var(--accent); margin-bottom: 1rem; }
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        label { display: block; margin-top: 1rem; font-weight: bold; }
+        input, textarea {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.3rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: #4a4a4a;
+            color: var(--text);
+        }
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        button:hover { opacity: 0.9; }
+        .login-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .login-box {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+        .hidden { display: none !important; }
+        .project-entry {
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .preview-img {
+            max-width: 120px;
+            border-radius: 0.5rem;
+            margin: 0.5rem 0;
+            display: block;
+        }
+        .hint { font-size: 0.85rem; color: #aaa; margin-top: 0.3rem; }
+    </style>
+</head>
+<body>
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-box">
+            <h2>🔐 Dev Mode</h2>
+            <input type="password" id="passwordInput" placeholder="Masukkan password" autocomplete="off">
+            <br>
+            <button id="loginBtn">Masuk</button>
+            <p id="loginError" style="color: #ff6666; margin-top: 0.5rem;"></p>
+        </div>
+    </div>
+
+    <div id="mainContent" class="container hidden">
+        <h1>🛠️ Developer Mode — Kelola Konten</h1>
+
+        <!-- FOTO PROFIL -->
+        <div class="card">
+            <h2>📷 Foto Profil</h2>
+            <img id="previewProfile" class="preview-img" src="" alt="Preview foto profil">
+            <label>Pilih gambar dari galeri (Maks 500KB)</label>
+            <input type="file" id="uploadPhoto" accept="image/*">
+            <button id="savePhotoBtn">Simpan Foto</button>
+        </div>
+
+        <!-- LOGO -->
+        <div class="card">
+            <h2>🏷️ Logo</h2>
+            <img id="previewLogo" class="preview-img" src="" alt="Logo Preview">
+            <label>Pilih gambar logo dari galeri (Maks 200KB)</label>
+            <input type="file" id="uploadLogo" accept="image/*">
+            <button id="saveLogoBtn">Simpan Logo</button>
+        </div>
+
+        <!-- PROFIL TEKS -->
+        <div class="card">
+            <h2>📝 Profil Teks</h2>
+            <label>Nama</label>
+            <input type="text" id="editName">
+            <label>Tagline</label>
+            <input type="text" id="editTagline">
+            <label>Deskripsi (Hero)</label>
+            <textarea id="editDescription" rows="3"></textarea>
+            <label>Tentang (HTML)</label>
+            <textarea id="editAbout" rows="5"></textarea>
+            <label>Keahlian (pisahkan dengan koma)</label>
+            <input type="text" id="editSkills">
+            <button id="saveTextProfileBtn">Simpan Profil Teks</button>
+        </div>
+
+        <!-- SOSIAL MEDIA -->
+        <div class="card">
+            <h2>🌐 Sosial Media</h2>
+            <label>WhatsApp (nomor saja)</label>
+            <input type="text" id="editWhatsapp">
+            <label>Instagram (URL lengkap)</label>
+            <input type="text" id="editInstagram">
+            <label>Email</label>
+            <input type="email" id="editEmail">
+            <button id="saveSocialBtn">Simpan Sosial Media</button>
+        </div>
+
+        <!-- PENGALAMAN -->
+        <div class="card">
+            <h2>💼 Pengalaman Kerja</h2>
+            <div id="experienceContainer"></div>
+            <button id="addExperience">+ Tambah Pengalaman</button>
+            <button id="saveExperience" style="margin-left:1rem">Simpan Pengalaman</button>
+        </div>
+
+        <!-- PROYEK -->
+        <div class="card">
+            <h2>🚀 Proyek</h2>
+            <div id="projectsContainer"></div>
+            <button id="addProject">+ Tambah Proyek</button>
+            <button id="saveProjects" style="margin-left:1rem">Simpan Proyek</button>
+        </div>
+
+        <p style="margin-top:1rem; text-align:center">Data &amp; gambar (Base64) tersimpan di Firestore. Perubahan langsung muncul.</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCq0WEAENl8nxhDXNihysZtZprqtc_L82U",
+            authDomain: "adsstudio-c7d24.firebaseapp.com",
+            projectId: "adsstudio-c7d24",
+            storageBucket: "adsstudio-c7d24.firebasestorage.app",
+            messagingSenderId: "707529787206",
+            appId: "1:707529787206:web:0745367d9d609c48740747",
+            measurementId: "G-4LWNZRFY0H"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const PASSWORD = "vanhouten31";
+        let currentData = {};
+
+        // Proyek default yang akan mengisi form jika Firestore kosong
+        const defaultProjects = [
+            {
+                name: "Kopi Lereng",
+                desc: "Website ini mengintegrasikan Google Maps dan WhatsApp agar owner tidak perlu aplikasi kasir terpisah. Dilengkapi developer mode untuk upload gambar/menu langsung dari galeri.",
+                tech: ["HTML/CSS", "JavaScript"],
+                link: "https://adsstudio23.github.io/Portofolio-coffe/",
+                image: ""
+            },
+            {
+                name: "Rent Cost",
+                desc: "Membantu pemilik bisnis rental baju cosplay menampilkan item dan berfungsi sebagai aplikasi kasir online.",
+                tech: ["HTML/CSS", "JavaScript", "React"],
+                link: "https://adsstudio23.github.io/Cosplay/",
+                image: ""
+            },
+            {
+                name: "Monster Hunter Ultimate Set",
+                desc: "Mempermudah player Monster Hunter 3rd Portable mencari mix set dan item, dengan animasi ringan.",
+                tech: ["HTML/CSS", "JavaScript", "React"],
+                link: "https://mh3rdultimate.github.io/Mh3rdmixset/",
+                image: ""
+            }
+        ];
+
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+            });
+        }
+
+        // Auth
+        document.getElementById("loginBtn").addEventListener("click", () => {
+            if (document.getElementById("passwordInput").value === PASSWORD) {
+                document.getElementById("loginOverlay").classList.add("hidden");
+                document.getElementById("mainContent").classList.remove("hidden");
+                loadData();
+            } else {
+                document.getElementById("loginError").textContent = "Password salah!";
+            }
+        });
+
+        async function loadData() {
+            const docRef = doc(db, "content", "profile");
+            const snap = await getDoc(docRef);
+            let data = snap.exists() ? snap.data() : {};
+            if (typeof data.skills === 'string') data.skills = data.skills.split(',').map(s => s.trim());
+            data.experience = data.experience || [];
+
+            const projSnap = await getDocs(collection(db, "content", "profile", "projects"));
+            if (!projSnap.empty) {
+                data.projects = [];
+                projSnap.forEach(doc => data.projects.push({ id: doc.id, ...doc.data() }));
+            } else {
+                // Firestore kosong → gunakan default
+                data.projects = JSON.parse(JSON.stringify(defaultProjects));
+            }
+            currentData = data;
+            populateForm(data);
+        }
+
+        function populateForm(data) {
+            document.getElementById("previewProfile").src = data.photoURL || '';
+            document.getElementById("previewLogo").src = data.logoURL || '';
+            document.getElementById("editName").value = data.name || '';
+            document.getElementById("editTagline").value = data.tagline || '';
+            document.getElementById("editDescription").value = data.description || '';
+            document.getElementById("editAbout").value = data.aboutText || '';
+            document.getElementById("editSkills").value = Array.isArray(data.skills) ? data.skills.join(', ') : data.skills;
+            document.getElementById("editWhatsapp").value = data.whatsapp || '';
+            document.getElementById("editInstagram").value = data.instagram || '';
+            document.getElementById("editEmail").value = data.email || '';
+            renderExperience(data.experience || []);
+            renderProjects(data.projects || []);
+        }
+
+        // Foto Profil
+        document.getElementById("savePhotoBtn").addEventListener("click", async () => {
+            const file = document.getElementById("uploadPhoto").files[0];
+            if (!file) return alert("Pilih file gambar.");
+            if (file.size > 500000) return alert("Maksimum 500KB.");
+            try {
+                const base64 = await convertToBase64(file);
+                await setDoc(doc(db, "content", "profile"), { photoURL: base64 }, { merge: true });
+                document.getElementById("previewProfile").src = base64;
+                document.getElementById("uploadPhoto").value = "";
+                alert("Foto profil tersimpan!");
+            } catch (e) { alert("Gagal: " + e.message); }
+        });
+
+        // Logo
+        document.getElementById("saveLogoBtn").addEventListener("click", async () => {
+            const file = document.getElementById("uploadLogo").files[0];
+            if (!file) return alert("Pilih file logo.");
+            if (file.size > 200000) return alert("Maksimum 200KB.");
+            try {
+                const base64 = await convertToBase64(file);
+                await setDoc(doc(db, "content", "profile"), { logoURL: base64 }, { merge: true });
+                document.getElementById("previewLogo").src = base64;
+                document.getElementById("uploadLogo").value = "";
+                alert("Logo tersimpan!");
+            } catch (e) { alert("Gagal: " + e.message); }
+        });
+
+        // Profil Teks
+        document.getElementById("saveTextProfileBtn").addEventListener("click", async () => {
+            const data = {
+                name: document.getElementById("editName").value,
+                tagline: document.getElementById("editTagline").value,
+                description: document.getElementById("editDescription").value,
+                aboutText: document.getElementById("editAbout").value,
+                skills: document.getElementById("editSkills").value.split(',').map(s => s.trim())
+            };
+            await setDoc(doc(db, "content", "profile"), data, { merge: true });
+            alert("Profil teks tersimpan!");
+        });
+
+        // Sosmed
+        document.getElementById("saveSocialBtn").addEventListener("click", async () => {
+            const d = {
+                whatsapp: document.getElementById("editWhatsapp").value,
+                instagram: document.getElementById("editInstagram").value,
+                email: document.getElementById("editEmail").value
+            };
+            await setDoc(doc(db, "content", "profile"), d, { merge: true });
+            alert("Sosial media tersimpan!");
+        });
+
+        // Pengalaman
+        function renderExperience(expArray) {
+            const c = document.getElementById("experienceContainer");
+            c.innerHTML = expArray.map((e, i) => `
+                <div class="project-entry">
+                    <input placeholder="Peran" value="${e.role || ''}" data-idx="${i}" class="exp-role">
+                    <input placeholder="Perusahaan" value="${e.company || ''}" data-idx="${i}" class="exp-company">
+                    <input placeholder="Tanggal" value="${e.date || ''}" data-idx="${i}" class="exp-date">
+                    <input placeholder="Deskripsi" value="${e.desc || ''}" data-idx="${i}" class="exp-desc">
+                    <button class="removeExp" data-idx="${i}">Hapus</button>
+                </div>`).join('');
+            document.querySelectorAll('.removeExp').forEach(b => {
+                b.addEventListener('click', (ev) => {
+                    currentData.experience.splice(ev.target.dataset.idx, 1);
+                    renderExperience(currentData.experience);
+                });
+            });
+        }
+        document.getElementById("addExperience").addEventListener("click", () => {
+            currentData.experience.push({ role: '', company: '', date: '', desc: '' });
+            renderExperience(currentData.experience);
+        });
+        document.getElementById("saveExperience").addEventListener("click", async () => {
+            const roles = document.querySelectorAll('.exp-role');
+            const companies = document.querySelectorAll('.exp-company');
+            const dates = document.querySelectorAll('.exp-date');
+            const descs = document.querySelectorAll('.exp-desc');
+            const exp = Array.from(roles).map((_, i) => ({
+                role: roles[i].value,
+                company: companies[i].value,
+                date: dates[i].value,
+                desc: descs[i].value
+            }));
+            await setDoc(doc(db, "content", "profile"), { experience: exp }, { merge: true });
+            alert("Pengalaman disimpan!");
+        });
+
+        // Proyek
+        function renderProjects(projects) {
+            const c = document.getElementById("projectsContainer");
+            c.innerHTML = projects.map((p, i) => `
+                <div class="project-entry">
+                    <input placeholder="Nama Proyek" value="${p.name || ''}" class="proj-name">
+                    <input placeholder="Deskripsi" value="${p.desc || ''}" class="proj-desc">
+                    <input placeholder="Teknologi (pisah koma)" value="${(p.tech || []).join(', ')}" class="proj-tech">
+                    <input placeholder="Link" value="${p.link || ''}" class="proj-link">
+                    <label>Gambar (Maks 300KB)</label>
+                    <input type="file" accept="image/*" class="proj-image-file">
+                    <button class="removeProj" data-idx="${i}">Hapus</button>
+                </div>`).join('');
+            document.querySelectorAll('.removeProj').forEach(b => {
+                b.addEventListener('click', (ev) => {
+                    currentData.projects.splice(ev.target.dataset.idx, 1);
+                    renderProjects(currentData.projects);
+                });
+            });
+        }
+        document.getElementById("addProject").addEventListener("click", () => {
+            currentData.projects.push({ name: '', desc: '', tech: [], link: '', image: '' });
+            renderProjects(currentData.projects);
+        });
+        document.getElementById("saveProjects").addEventListener("click", async () => {
+            const names = document.querySelectorAll('.proj-name');
+            const descs = document.querySelectorAll('.proj-desc');
+            const techs = document.querySelectorAll('.proj-tech');
+            const links = document.querySelectorAll('.proj-link');
+            const files = document.querySelectorAll('.proj-image-file');
+            const colRef = collection(db, "content", "profile", "projects");
+
+            // Hapus semua proyek di Firestore
+            const batch = writeBatch(db);
+            (await getDocs(colRef)).forEach(d => batch.delete(d.ref));
+            await batch.commit();
+
+            // Masukkan ulang dari form
+            for (let i = 0; i < names.length; i++) {
+                let img = currentData.projects[i]?.image || "";
+                if (files[i].files[0]) {
+                    if (files[i].files[0].size > 300000) {
+                        alert("Maksimal 300KB per gambar proyek.");
+                        continue;
+                    }
+                    img = await convertToBase64(files[i].files[0]);
+                }
+                await addDoc(colRef, {
+                    name: names[i].value,
+                    desc: descs[i].value,
+                    tech: techs[i].value.split(',').map(s => s.trim()),
+                    link: links[i].value,
+                    image: img
+                });
+            }
+            alert("Proyek disimpan!");
+            loadData(); // muat ulang untuk mendapatkan ID baru
+        });
+    </script>
+</body>
+</html>
